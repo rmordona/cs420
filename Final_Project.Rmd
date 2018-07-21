@@ -14,7 +14,7 @@ urlcolor: cyan
 
 ## Group Introduction
 
-This study is conducted by the following members:
+This study is conducted by the following members from Group 29:
 
  - Apoorva H Srinivasa (NetID: **apoorva6**)
  - Madhukar K P (NetID: **mk30**)
@@ -402,7 +402,7 @@ hist(predicted_abv,  breaks=20, xlab="Predicted Value from Model 3", main="Histo
 hist(actual_abv, breaks=20, xlab="Actual value from Test Set", main="Histogram from Actual")
 ```
 
-The histograms seems to be the same.
+Histogram shows similarity between predicted value and actual value.
 
 Additionally, sampling the first 20 ABVs of both actual and predict are very close. 
 
@@ -410,6 +410,15 @@ Additionally, sampling the first 20 ABVs of both actual and predict are very clo
 head(actual_abv, 20)
 round(as.vector(head(predicted_abv[,"fit"], 20)),2)
 ```
+
+Looking at predicted values vs actual values
+
+```{r}
+plot(predicted_abv[,"fit"], actual_abv, col="dodgerblue", ylab="Actual", 
+      xlab="Predicted", main="Actual vs Predicted for Test Data")
+abline(0,1, col="darkorange", lwd=2)
+```
+
 
 Checking RMSE:
 
@@ -431,7 +440,7 @@ This is the result of the dataset after outliers are removed (Whether model1, mo
 data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE) 
 ```
 
-Notice that residual range droped from (-19, 6) to (-6, to 6)
+Notice that residual range dropped from (-19, 6) to (-6, to 6)
 
 ---
 
