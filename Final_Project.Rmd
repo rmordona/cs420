@@ -70,14 +70,16 @@ Below is an example of the dataset. Note that 'Style' and 'StyleID' are not part
 
 ## Methods
 
+Our study starts by performing data preparation work. First, we have omitted observations that have missing values for the response - ABV - and one of the predictors - BoilGravity. Secondly, we have converted BoilGravity from categorical to numeric/continuous. Lastly, we have split the 73.8k observations into two sets:  one for training a model, the other for testing the model. This will be useful in the discussion section where we will attempt to predict the alcohol content ( by volume ) of beers from the test set, pretending that we have brewed them at home.
+
+Here, we will be using a 10-k fold validation or a 1-out validation. The train_set has 63.7K randomly sampled observations (90%) and the test_set has the rest of random observations, 7k (10%), using a random seed of 142.
+
+
 ```{r}
 library("leaps")
 options(scipen = 1, digits = 3, width = 80, fig.align = "center")
 ```
 
-Our study starts by performing data preparation work. First, we have omitted observations that have missing values for the response - ABV - and one of the predictors - BoilGravity. Secondly, we have converted BoilGravity from categorical to numeric/continuous. Lastly, we have split the 73.8k observations into two sets:  one for training a model, the other for testing the model. This will be useful in the discussion section where we will attempt to predict the alcohol content ( by volume ) of beers from the test set, pretending that we have brewed them at home.
-
-Here, we will be using a 10-k fold validation or a 1-out validation. The train_set has 63.7K randomly sampled observations (90%) and the test_set has the rest of random observations, 7k (10%), using a random seed of 142.
 
 ```{r}
 
@@ -115,23 +117,23 @@ pairs(train_set[, c("ABV", "FG")])
 
 Of the methods we have tested, we have narrowed our efforts down to using AIC as criteria in selecting a model and comparing both the STEPWISE search method and the EXHAUSTIVE search methods.
 
-Also, we have chosen to take three studies in this project:
+**Also, we have chosen to take three studies in this project:**
 
 Note that all our test excluded FG ( we could also have removed that in our data preparation step).
 
-Study 1: Using AIC backward Stepwise Search with additive model and two-way interaction across the additive model.
+**Study 1:** Using AIC backward Stepwise Search with **additive model** and **two-way interaction** across the additive model.
 
 * ABV ~ (.-FG)^2
 
-Study 2: Using AIC backward Stepwise Search with additive model and two-way interaction for only the categorical predictors.
+**Study 2:** Using AIC backward Stepwise Search with **additive model** and **two-way interaction** for only the categorical predictors.
 
 * ABV ~ (. - FG ) +  (OG + IBU + Color + Efficiency + BoilGravity + BoilTime ) * (SugarScale + BrewMethod)
 
-Study 3: Using Exhaustive Search and Parameterization.
+**Study 3:** Using Exhaustive Search and **Parameterization (with Dummy Variables)**.
 
 * ABV ~ (.-FG)^2
 
-The following helper function (residual_fitted_plot) is used to plot residual-vs-fitted plot along with outliers. This function accepts model, data, outlier, and threshold as input parameters. The outlier parameter is BOOLEAN. If set to TRUE, it will use the threshold parameter to compute and plot for the outliers. The function will return the data set ( without the outliers if the outlier parameter and threshold input are used).
+The following helper function (**residual_fitted_plot**) is used to plot residual-vs-fitted plot along with outliers. This function accepts model, data, outlier, and threshold as input parameters. The outlier parameter is BOOLEAN. If set to TRUE, it will use the threshold parameter to compute and plot for the outliers. The function will return the data set ( without the outliers if the outlier parameter and threshold input are used).
 
 ```{r}
 
@@ -160,7 +162,7 @@ residual_fitted_plot = function(model, data,  outlier, threshold = 0) {
 
 ```
 
-The following helper function (result_metrics) to capture R2, adjusted R2, RMSE, number of coefficients used, and 
+The following helper function (**result_metrics**) to capture R2, adjusted R2, RMSE, number of coefficients used, and 
 list of coefficients that are significant based of a given alpha.
 
 ```{r}
