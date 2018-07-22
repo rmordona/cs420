@@ -108,7 +108,7 @@ nrow(test_set)
 
 ```
 
-One important note: while there is no sign of collinearity between ABV and FG, we have decided to exclude FG in our models as ABV is directly derived from FG.
+One important note: while there is no sign of collinearity between ABV and FG, we have decided to exclude FG in our models as ABV is directly derived from FG. We will also exclude IBU (which has to do with measuring bitterness of beer)
 
 ```{r}
 pairs(train_set[, c("ABV", "FG")])
@@ -123,15 +123,15 @@ Note that all our test excluded FG ( we could also have removed that in our data
 
 **Study 1:** Using AIC backward Stepwise Search with **additive model** and **two-way interaction** across the additive model.
 
-* ABV ~ (.-FG)^2
+* ABV ~ (. -FG - IBU )^2
 
 **Study 2:** Using AIC backward Stepwise Search with **additive model** and **two-way interaction** for only the categorical predictors.
 
-* ABV ~ (. - FG ) +  (OG + IBU + Color + Efficiency + BoilGravity + BoilTime ) * (SugarScale + BrewMethod)
+* ABV ~ (. - FG - IBU) +  (OG + Color + Efficiency + BoilGravity + BoilTime ) * (SugarScale + BrewMethod)
 
 **Study 3:** Using Exhaustive Search and **Parameterization (with Dummy Variables)**.
 
-* ABV ~ (.-FG)^2
+* ABV ~ (. -FG - IBU)^2
 
 The following helper function (**residual_fitted_plot**) is used to plot residual-vs-fitted and outliers.  This function accepts model, data, outlier, and threshold as input parameters. The outlier parameter is BOOLEAN. If set to TRUE, it will use the threshold parameter to compute and plot for the outliers. The function will return the data set ( without the outliers if the outlier parameter and threshold input are used).
 
@@ -203,12 +203,11 @@ In this study 1, we have captured the time it takes to capture the search.
 ```{r}
 
 
-start_model = lm(ABV ~ (.-FG)^2 , data = train_set)
+start_model = lm(ABV ~ (. -FG - IBU)^2 , data = train_set)
 
 system.time((
 model1_srch = step( start_model, direction = "backward", trace=0) 
 ))
-
 
 ```
 
@@ -226,14 +225,13 @@ Note that there are 5 observed outliers out of 63.7k observations. By removing t
 Refit a model againt dataset with no outliers, using the model derived from the aic backward stepwise search.
 
 ```{r}
-model1  =  lm(formula = ABV ~ OG + IBU + Color + Efficiency + BoilGravity + 
-    BoilTime + SugarScale + BrewMethod + OG:Efficiency + OG:BoilGravity + 
-    OG:BoilTime + OG:SugarScale + OG:BrewMethod + IBU:Color + 
-    IBU:BoilGravity + IBU:BoilTime + IBU:SugarScale + IBU:BrewMethod + 
-    Color:Efficiency + Color:BoilGravity + Color:BoilTime + Color:SugarScale + 
-    Color:BrewMethod + Efficiency:BoilTime + Efficiency:SugarScale + 
-    Efficiency:BrewMethod + BoilGravity:BoilTime + BoilGravity:SugarScale + 
-    BoilTime:SugarScale + BoilTime:BrewMethod + SugarScale:BrewMethod, 
+model1  =  lm(formula = ABV ~ OG + Color + Efficiency + BoilGravity + BoilTime + 
+    SugarScale + BrewMethod + OG:Efficiency + OG:BoilTime + OG:SugarScale + 
+    OG:BrewMethod + Color:Efficiency + Color:BoilGravity + Color:BoilTime + 
+    Color:SugarScale + Color:BrewMethod + Efficiency:BoilTime + 
+    Efficiency:SugarScale + Efficiency:BrewMethod + BoilGravity:BoilTime + 
+    BoilGravity:BrewMethod + BoilTime:SugarScale + BoilTime:BrewMethod + 
+    SugarScale:BrewMethod, 
     data = data_no_outliers)
 
 model1_result = result_metrics(model1, alpha=0.10)
@@ -247,15 +245,13 @@ model1_result
 
 ```{r}
 
-start_model = lm(ABV ~ (. - FG ) + 
-        (OG + IBU + Color + Efficiency + BoilGravity + BoilTime ) * (SugarScale + BrewMethod),
+start_model = lm(ABV ~ (. - FG - IBU ) + 
+        (OG + Color + Efficiency + BoilGravity + BoilTime ) * (SugarScale + BrewMethod),
          data = train_set)
 
 system.time((
 model2_srch = step( start_model, direction = "backward", trace=0) 
 ))
-
-
 
 ```
 
@@ -273,11 +269,11 @@ Note that there are 5 observed outliers out of 63.7k observations. By removing t
 Refit a model againt dataset with no outliers, using the model derived from the aic backward stepwise search.
 
 ```{r}
-model2 =   lm(formula = ABV ~ OG + IBU + Color + Efficiency + BoilGravity + 
-    BoilTime + SugarScale + BrewMethod + OG:SugarScale + OG:BrewMethod + 
-    IBU:SugarScale + IBU:BrewMethod + Color:SugarScale + Efficiency:BrewMethod + 
-    BoilGravity:SugarScale + BoilGravity:BrewMethod + BoilTime:SugarScale + 
-    BoilTime:BrewMethod, data = data_no_outliers)
+model2 =   lm(formula = ABV ~ OG + Color + Efficiency + BoilGravity + BoilTime + 
+    SugarScale + BrewMethod + OG:SugarScale + OG:BrewMethod + 
+    Color:SugarScale + Efficiency:BrewMethod + BoilGravity:SugarScale + 
+    BoilGravity:BrewMethod + BoilTime:SugarScale + BoilTime:BrewMethod, 
+    data = data_no_outliers)
 
 model2_result = result_metrics(model2, alpha=0.10)
 model2_call = model2$call
@@ -292,43 +288,44 @@ model2_result
 ```{r}
 
 system.time( (
-start_model = summary(regsubsets(ABV ~ (.-FG)^2 , data = train_set, really.big=TRUE))
+start_model = summary(regsubsets(ABV ~ (. -FG - IBU )^2 , data = train_set, really.big=TRUE))
 )
 )
 
-# Derive coefficients based on the highest Adjusted R-squared.
+# Derive coefficients/variables based on the highest Adjusted R-squared.
 best_r2_ind = which.max(start_model$adjr2)
 coef = names( which(start_model$which[best_r2_ind, ]) )
-
+cat("Chosen variables by Exhaustive Search:\n")
+coef
 # Parameterization
-# Using the coefficients derived from the exhaustive search, create a new dataframe using
-# two new dummy variables for both train_set and test_set
+# Using the coefficients/variables derived from the exhaustive search, create a new dataframe using
+# three new dummy variables for both train_set and test_set
 
 new_train_set = data.frame(
 ABV = train_set$ABV,
 OG = train_set$OG,
 Color = train_set$Color,
-IBU = train_set$IBU,
 BoilGravity = train_set$BoilGravity,
 BoilTime = train_set$BoilTime,
 v1 = 1 * as.numeric(train_set$SugarScale == "Specific Gravity"),
-v2 = 1 * as.numeric(train_set$BrewMethod == "extract")
+v2 = 1 * as.numeric(train_set$BrewMethod == "BIAB"),
+v3 = 1 * as.numeric(train_set$BrewMethod == "extract")
 )
 
 new_test_set = data.frame(
 ABV = test_set$ABV,
 OG = test_set$OG,
 Color = test_set$Color,
-IBU = test_set$IBU,
 BoilGravity = test_set$BoilGravity,
 BoilTime = test_set$BoilTime,
 v1 = 1 * as.numeric(test_set$SugarScale == "Specific Gravity"),
-v2 = 1 * as.numeric(test_set$BrewMethod == "extract")
+v2 = 1 * as.numeric(test_set$BrewMethod == "BIAB"),
+v3 = 1 * as.numeric(test_set$BrewMethod == "extract")
 )
 
 
 # Now try to fit a model
-model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGravity + BoilTime:v2,
+model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
               data = new_train_set)
 
 
@@ -349,7 +346,7 @@ Refit a model againt dataset with no outliers, using the model derived from the 
 
 ```{r}
 
-model3 = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGravity + BoilTime:v2,
+model3 = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
               data = data_no_outliers)
 
 model3_result = result_metrics(model3, alpha=0.10)
@@ -378,7 +375,7 @@ knitr::kable(dframe_results, type="markdown")
 ```
 
 We have shown in our study three good models with R-squared at (`r model3_result$r2`) and 
-adjusted-R2 (`r model3_result$adjusted_r2`) and an RMSE (`r model1_result$rmse`, `r model3_result$rmse`). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values ).
+adjusted-R2 (`r model3_result$adjusted_r2`) and an RMSE (`r model1_result$rmse`). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values ).
 From the  perspective of significance of regression,  it does show that model 3 has the more simple and less variables than the other two models. However, model 1 seems to have a more dominant significant p-values - this may be true based on the idea that the more predictors/variables we have, the more degrees of freedom, and thus, the higher towards fitting a better model.
 
 To prove the point, what does ANOVA tell us in the F-test?
@@ -445,9 +442,9 @@ Checking RMSE:
 (accuracy = 1 - (rmse = sqrt( mean(( predicted_abv - actual_abv )^2) ))) * 100
 ```
 
-Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the preferred model 3, it can be observed that an accuracy of `r accuracy` seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely for more additional sensors does not give additional benefit or effect (see R-squared/RMSE) (though statistically, those extraneous sensors may be significant by ANOVA). It should be noted that based on the Exhaustive search (model 3), for ABV (alcohol by volume), by way of parameterization (sort of brute force), it is necessary that BrewMethod has to be set to 'extract' and SugarScale to 'Specific Gravity'. The interaction between IBU and color, IBU and BoilGravity, Boltime and Brewmethod of 'extract' are all significant as well, along with OG and Color. (This could very well be done also by subsetting dataset to those observations only)
+Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the preferred model 3, it can be observed that an accuracy of `r accuracy` seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely for more additional sensors does not give additional benefit or effect (see R-squared/RMSE) (though statistically, those extraneous sensors may be significant by ANOVA). It should be noted that based on the Exhaustive search (model 3), for ABV (alcohol by volume), by way of parameterization (sort of brute force), it suggest to have a good mix of either "extract" or "BIAB" for BrewMethod along with "Specific Gravity" for SugarScale. The interaction between Color and BoilTime, Boltime and Brewmethod of 'extract'. (This could very well be done also by subsetting dataset to those observations only)
 
-In other words, it is fair to say - referring to some of the extraneous variables - that we don't have to measure the interaction between Color and BoilGravity, or  Color and BoilTime as determined by model 1 because those interactions do not prove to be significant in model 3. (Ref 17.3 of text)
+In other words, it is fair to say - referring to some of the extraneous variables - that we don't have to measure the interaction between Color and BoilGravity, or between Color and Efficiency as determined by model 1 because those interactions do not prove to be significant in model 3. (Ref 17.3 of text)
 
 ---
 
