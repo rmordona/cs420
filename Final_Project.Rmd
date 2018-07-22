@@ -332,7 +332,6 @@ v2 = 1 * as.numeric(test_set$BrewMethod == "extract")
 model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGravity + BoilTime:v2,
               data = new_train_set)
 
-model3_result = result_metrics(model_exhaust, alpha=0.10)
 
 ```
 

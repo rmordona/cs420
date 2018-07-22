@@ -440,7 +440,7 @@ system.time((
 model1_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##  27.740   0.856  28.686</code></pre>
+##  27.568   0.832  28.530</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -502,7 +502,7 @@ system.time((
 model2_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.885   0.208   3.101</code></pre>
+##   2.841   0.204   3.051</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -558,7 +558,7 @@ start_model = summary(regsubsets(ABV ~ (.-FG)^2 , data = train_set, really.big=T
 )
 )</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.947   0.034   0.983</code></pre>
+##   0.929   0.032   0.962</code></pre>
 <pre class="r"><code># Derive coefficients based on the highest Adjusted R-squared.
 best_r2_ind = which.max(start_model$adjr2)
 coef = names( which(start_model$which[best_r2_ind, ]) )
@@ -592,9 +592,7 @@ v2 = 1 * as.numeric(test_set$BrewMethod == &quot;extract&quot;)
 
 # Now try to fit a model
 model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGravity + BoilTime:v2,
-              data = new_train_set)
-
-model3_result = result_metrics(model_exhaust, alpha=0.10)</code></pre>
+              data = new_train_set)</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
