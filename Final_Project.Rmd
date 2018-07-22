@@ -259,7 +259,7 @@ model2_srch = step( start_model, direction = "backward", trace=0)
 
 ```
 
-Note: running the search takes approximately between 27 seconds to 2 minutes.
+Note: running the search takes approximately between 2.829 seconds to 5 seconds.
 
 *Plotting and Validating outliers:* 
 
@@ -334,7 +334,7 @@ model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGra
 
 ```
 
-Note: running the search takes approximately between 27 seconds to 2 minutes.
+Note: running the search takes approximately between 0.957 seconds to 5 seconds.
 
 *Plotting and Validating outliers:*
 
@@ -378,7 +378,7 @@ knitr::kable(dframe_results, type="markdown")
 ```
 
 We have shown in our study three good models with R-squared at (`r model3_result$r2`) and 
-adjusted-R2 (`r model3_result$adjusted_r2`) and an RMSE (`r model1_result$rmse`, `r model3_result$rmse`). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values )
+adjusted-R2 (`r model3_result$adjusted_r2`) and an RMSE (`r model1_result$rmse`, `r model3_result$rmse`). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values ).
 From the  perspective of significance of regression,  it does show that model 3 has the more simple and less variables than the other two models. However, model 1 seems to have a more dominant significant p-values - this may be true based on the idea that the more predictors/variables we have, the more degrees of freedom, and thus, the higher towards fitting a better model.
 
 To prove the point, what does ANOVA tell us in the F-test?

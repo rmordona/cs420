@@ -440,7 +440,7 @@ system.time((
 model1_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##  27.433   0.832  28.318</code></pre>
+##  27.852   0.859  28.942</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -502,8 +502,8 @@ system.time((
 model2_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.836   0.207   3.048</code></pre>
-<p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
+##   2.864   0.211   3.079</code></pre>
+<p>Note: running the search takes approximately between 2.829 seconds to 5 seconds.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
 data_no_outliers =  residual_fitted_plot(model2_srch, train_set, TRUE, -9) </code></pre>
@@ -558,7 +558,7 @@ start_model = summary(regsubsets(ABV ~ (.-FG)^2 , data = train_set, really.big=T
 )
 )</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.937   0.033   0.970</code></pre>
+##   0.956   0.033   0.991</code></pre>
 <pre class="r"><code># Derive coefficients based on the highest Adjusted R-squared.
 best_r2_ind = which.max(start_model$adjr2)
 coef = names( which(start_model$which[best_r2_ind, ]) )
@@ -593,7 +593,7 @@ v2 = 1 * as.numeric(test_set$BrewMethod == &quot;extract&quot;)
 # Now try to fit a model
 model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + OG:v1 + IBU:Color + IBU:BoilGravity + BoilTime:v2,
               data = new_train_set)</code></pre>
-<p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
+<p>Note: running the search takes approximately between 0.957 seconds to 5 seconds.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
 data_no_outliers =  residual_fitted_plot(model_exhaust, new_train_set, TRUE, -9) </code></pre>
@@ -677,7 +677,7 @@ knitr::kable(dframe_results, type=&quot;markdown&quot;)</code></pre>
 </tr>
 </tbody>
 </table>
-<p>We have shown in our study three good models with R-squared at (0.95) and adjusted-R2 (0.95) and an RMSE (0.42, 0.43). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values ) From the perspective of significance of regression, it does show that model 3 has the more simple and less variables than the other two models. However, model 1 seems to have a more dominant significant p-values - this may be true based on the idea that the more predictors/variables we have, the more degrees of freedom, and thus, the higher towards fitting a better model.</p>
+<p>We have shown in our study three good models with R-squared at (0.95) and adjusted-R2 (0.95) and an RMSE (0.42, 0.43). The only difference is the number of variables/coefficients ( showing both significant and non-significant p-values ). From the perspective of significance of regression, it does show that model 3 has the more simple and less variables than the other two models. However, model 1 seems to have a more dominant significant p-values - this may be true based on the idea that the more predictors/variables we have, the more degrees of freedom, and thus, the higher towards fitting a better model.</p>
 <p>To prove the point, what does ANOVA tell us in the F-test?</p>
 <p>First, we compared model1 and model2. Model2 being the Null Hypothesis.</p>
 <pre class="r"><code>anova( model1_srch, model2_srch)</code></pre>
