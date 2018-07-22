@@ -398,7 +398,7 @@ anova(model1_srch, model_exhaust)
 
 The result of the F-TEST does show that model 1 (Full Hypothesis) is the choice of model since the F-test rejects the null hypothesis. However, if one has to compare all the numeric values, apart from model 1 being slow in aic backward keywise search, there is really not much significant difference in terms of R2, adjusted R3, and RMSE. In fact, in can be argued that model 1 may have been chosen due to the fact that model 1 has more significant coefficients (`r model1_result$coef_count - model1_result$not_sig_coef_count`) than model 2 (`r model2_result$coef_count - model2_result$not_sig_coef_count`) or 3 (`r model3_result$coef_count - model3_result$not_sig_coef_count`)
 
-So why model 3 seems to be more preferred when R2, adjusted R3, rmse are all the same among model1,2,3 - and model 1 is chosen by ANOVA? This comes down to the goal of this study which is about COST. Without compromising accuracy, if we can make beer using the least gadgets and measurements, that would be ideal.
+So why model 3 seems to be more preferred when R2, adjusted R3, rmse are all the same among model1,2,3 - and model 1 is chosen by ANOVA? This comes down to the goal of this study which is about COST. Without compromising accuracy/measurements, if we can make beer using the least gadgets and sensors (or categorical choices even), that would be ideal. Basically, why complicate if we can get the same results with less cost.
 
 ---
 
@@ -440,7 +440,7 @@ Checking RMSE:
 (accuracy = 1 - (rmse = sqrt( mean(( predicted_abv - actual_abv )^2) ))) * 100
 ```
 
-Basically, if we are to assume for a moment that the test data all come from our attempts to make bear, it would seem that by following the measuring gadgets ( or sensors ) based on the model, we should be able to closely get an accuracy of `r accuracy`.
+Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, we should be able to closely get an accuracy of `r accuracy`.
 
 ---
 
