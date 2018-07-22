@@ -445,7 +445,7 @@ Checking RMSE:
 (accuracy = 1 - (rmse = sqrt( mean(( predicted_abv - actual_abv )^2) ))) * 100
 ```
 
-Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, we should be able to closely get an accuracy of `r accuracy`.
+Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, we should be able to closely get an accuracy of `r accuracy`. It should be noted that based on the exhaustive search (model 3), for a good ABV, it is significantly necessary that BrewMethod has to be set to 'extract' and SugarScale to 'Specific Gravity'. The interaction between IBU and color, IBU and BoilGravity, Boltime and Brewmethod of 'extract' are all significant as well, along with OG and Color.
 
 ---
 
