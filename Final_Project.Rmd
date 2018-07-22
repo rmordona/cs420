@@ -115,7 +115,7 @@ pairs(train_set[, c("ABV", "FG")])
 ```
 
 
-Of the methods we have tested, we have narrowed our efforts down to using AIC as criteria in selecting a model and comparing both the STEPWISE search method and the EXHAUSTIVE search methods.
+Of the methods we have tested, we have narrowed our efforts down to using a.) AIC as criteria in selecting a model and comparing both the STEPWISE search method; and b.) the EXHAUSTIVE search method.
 
 **Also, we have chosen to take three studies in this project:**
 
@@ -133,7 +133,7 @@ Note that all our test excluded FG ( we could also have removed that in our data
 
 * ABV ~ (.-FG)^2
 
-The following helper function (**residual_fitted_plot**) is used to plot residual-vs-fitted plot along with outliers. This function accepts model, data, outlier, and threshold as input parameters. The outlier parameter is BOOLEAN. If set to TRUE, it will use the threshold parameter to compute and plot for the outliers. The function will return the data set ( without the outliers if the outlier parameter and threshold input are used).
+The following helper function (**residual_fitted_plot**) is used to plot residual-vs-fitted and outliers.  This function accepts model, data, outlier, and threshold as input parameters. The outlier parameter is BOOLEAN. If set to TRUE, it will use the threshold parameter to compute and plot for the outliers. The function will return the data set ( without the outliers if the outlier parameter and threshold input are used).
 
 ```{r}
 
@@ -166,8 +166,7 @@ residual_fitted_plot = function(model, data,  outlier, threshold = 0) {
 
 ```
 
-The following helper function (**result_metrics**) to capture R2, adjusted R2, RMSE, number of coefficients used, and 
-list of coefficients that are significant based of a given alpha.
+The following helper function (**result_metrics**) is used to capture R2, adjusted R2, RMSE, number of coefficients used, and  list of coefficients that are significant based of a given alpha.
 
 ```{r}
 
