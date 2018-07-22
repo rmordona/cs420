@@ -403,7 +403,7 @@ anova(model1_srch, model_exhaust)
 
 The result of the F-TEST does show that model 1 (Full Hypothesis) is the choice of model since the F-test rejects the null hypothesis. However, if one has to compare all the numeric values, apart from model 1 being slow in aic backward keywise search, there is really not much significant difference in terms of R2, adjusted R3, and RMSE. In fact, in can be argued that model 1 may have been chosen due to the fact that model 1 has more significant coefficients (`r model1_result$coef_count - model1_result$not_sig_coef_count`) than model 2 (`r model2_result$coef_count - model2_result$not_sig_coef_count`) or 3 (`r model3_result$coef_count - model3_result$not_sig_coef_count`)
 
-So why model 3 seems to be more preferred when R2, adjusted R3, rmse are all the same among model1,2,3 - and model 1 is chosen by ANOVA? This comes down to the goal of this study which is about COST. Without compromising accuracy/measurements, if we can make beer using the least gadgets and sensors (or categorical choices even), that would be ideal. Basically, why complicate if we can get the same results with less cost.
+So why model 3 seems to be more preferred when R2, adjusted R3, rmse are all the same among model1,2,3 - and model 1 is chosen by ANOVA? This comes down to the goal of this study which is about COST. Without compromising accuracy/measurements, if we can make beer using the least gadgets and sensors (or categorical choices even), that would be ideal. Basically, why complicate if we can get the same results with less cost. (Ref 17.3 of text).
 
 ---
 
@@ -447,7 +447,7 @@ Checking RMSE:
 
 Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, it can be observed that an accuracy of `r accuracy` seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely on others do not give any benefit or effect (statistically, no significance). It should be noted that based on the exhaustive search (model 3), for ABV (alcohol by volume), it is significantly necessary that BrewMethod has to be set to 'extract' and SugarScale to 'Specific Gravity'. The interaction between IBU and color, IBU and BoilGravity, Boltime and Brewmethod of 'extract' are all significant as well, along with OG and Color.
 
-On the other hand, we don't have to measure the interaction between Color and BoilGravity, or  Color and BoilTime as determined by model 1 because those interactions do not prove to be significant in model 3.
+On the other hand, we don't have to measure the interaction between Color and BoilGravity, or  Color and BoilTime as determined by model 1 because those interactions do not prove to be significant in model 3. (Ref 17.3 of text)
 
 ---
 
