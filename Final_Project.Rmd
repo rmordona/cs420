@@ -342,6 +342,7 @@ Note: running the search takes approximately between 27 seconds to 2 minutes.
 # Plot residual-fitted, and return dataset without outliers.
 data_no_outliers =  residual_fitted_plot(model_exhaust, new_train_set, TRUE, -9) 
 ```
+
 Note that there are 5 observed outliers out of 63.7k observations. By removing the outliers, the residual range narrowed from (-19,6) to (-6,6). See the new plot in Appendix section.
 
 Refit a model againt dataset with no outliers, using the model derived from the exhausted search.
