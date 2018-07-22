@@ -440,7 +440,7 @@ system.time((
 model1_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##  27.852   0.859  28.942</code></pre>
+##  27.250   0.831  28.109</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -502,7 +502,7 @@ system.time((
 model2_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##   2.864   0.211   3.079</code></pre>
+##   2.844   0.209   3.056</code></pre>
 <p>Note: running the search takes approximately between 2.829 seconds to 5 seconds.</p>
 <p><em>Plotting and Validating outliers:</em></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -558,7 +558,7 @@ start_model = summary(regsubsets(ABV ~ (.-FG)^2 , data = train_set, really.big=T
 )
 )</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.956   0.033   0.991</code></pre>
+##   0.931   0.031   0.966</code></pre>
 <pre class="r"><code># Derive coefficients based on the highest Adjusted R-squared.
 best_r2_ind = which.max(start_model$adjr2)
 coef = names( which(start_model$which[best_r2_ind, ]) )
@@ -753,7 +753,7 @@ abline(0,1, col=&quot;darkorange&quot;, lwd=2)</code></pre>
 <p>Checking RMSE:</p>
 <pre class="r"><code>(accuracy = 1 - (rmse = sqrt( mean(( predicted_abv - actual_abv )^2) ))) * 100</code></pre>
 <pre><code>## [1] 57.7</code></pre>
-<p>Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, it can be observed that an accuracy of 0.577 seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely on others do not give any benefit or effect (statistically, no significance). It should be noted that based on the exhaustive search (model 3), for ABV (alcohol by volume), it is significantly necessary that BrewMethod has to be set to ‘extract’ and SugarScale to ‘Specific Gravity’. The interaction between IBU and color, IBU and BoilGravity, Boltime and Brewmethod of ‘extract’ are all significant as well, along with OG and Color.</p>
+<p>Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the model, it can be observed that an accuracy of 0.577 seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely for more additional sensors does not give any benefit or effect (statistically, no significance). It should be noted that based on the exhaustive search (model 3), for ABV (alcohol by volume), it is significantly necessary that BrewMethod has to be set to ‘extract’ and SugarScale to ‘Specific Gravity’. The interaction between IBU and color, IBU and BoilGravity, Boltime and Brewmethod of ‘extract’ are all significant as well, along with OG and Color.</p>
 <p>On the other hand, we don’t have to measure the interaction between Color and BoilGravity, or Color and BoilTime as determined by model 1 because those interactions do not prove to be significant in model 3. (Ref 17.3 of text)</p>
 <hr />
 </div>
