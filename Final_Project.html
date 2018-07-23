@@ -440,7 +440,7 @@ system.time((
 model1_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##  12.517   0.489  13.062</code></pre>
+##  12.391   0.479  12.884</code></pre>
 <p>Note: running the search takes approximately between 27 seconds to 2 minutes.</p>
 <p><strong>Plotting and Validating outliers:</strong></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -501,7 +501,7 @@ system.time((
 model2_srch = step( start_model, direction = &quot;backward&quot;, trace=0) 
 ))</code></pre>
 <pre><code>##    user  system elapsed 
-##   1.868   0.145   2.016</code></pre>
+##   1.984   0.154   2.180</code></pre>
 <p>Note: running the search takes approximately between 2.829 seconds to 5 seconds.</p>
 <p><strong>Plotting and Validating outliers:</strong></p>
 <pre class="r"><code># Plot residual-fitted, and return dataset without outliers.
@@ -549,7 +549,7 @@ start_model = summary(regsubsets(ABV ~ (. -FG - IBU )^2 , data = train_set, real
 )
 )</code></pre>
 <pre><code>##    user  system elapsed 
-##   0.283   0.028   0.312</code></pre>
+##   0.273   0.028   0.301</code></pre>
 <pre class="r"><code># Derive coefficients/variables based on the highest Adjusted R-squared.
 best_r2_ind = which.max(start_model$adjr2)
 coef = names( which(start_model$which[best_r2_ind, ]) )
@@ -784,7 +784,7 @@ qqline(resid(model3), col = &quot;dodgerblue&quot;, lwd = 2)</code></pre>
 <p>Still within the range of the residual range. The residuals are normally distributed (symmetric), but we are not going to put penalty on the outliers ( tails moving away from the blue line).</p>
 <hr />
 <p><strong>Just an extra, for fun, what if we brew our own beer at home, but want to only serve 4-6 ABV contents for occasional beer drinkers?</strong></p>
-<p>Let’s see:</p>
+<p>Let’s see (still using model 3):</p>
 <pre class="r"><code>test_for_occasions = new_test_set[ which ( new_test_set$ABV &lt;= 6 &amp; new_test_set$ABV &gt;=4 ),]
 
 predicted_occasions = predict(model3, test_for_occasions, type=&quot;response&quot;)
@@ -795,7 +795,7 @@ actual_occasions = test_for_occasions$ABV
 <pre><code>## [1] 0.339</code></pre>
 <p>That’s so much better. We should be able to brew beer, predicting an expected alcohool content with an error of only 0.339 if we focus our beer making around the 4-6 ABV.</p>
 <p><strong>Can we serve drinkers with advance taste for beer?</strong></p>
-<p>Here, we’re assuming they’re looking for stronger beer above 6 ABV perhaps. Let’s see</p>
+<p>Here, we’re assuming they’re looking for stronger beer above 6 ABV perhaps. Let’s see:</p>
 <pre class="r"><code>test_for_hard = new_test_set[ which ( new_test_set$ABV &gt; 6 ),]
 
 predicted_hard = predict(model3, test_for_hard, type=&quot;response&quot;)

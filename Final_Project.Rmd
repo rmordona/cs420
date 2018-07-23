@@ -504,7 +504,7 @@ Still within the range of the residual range. The residuals are normally distrib
 
 **Just an extra, for fun,  what if we brew our own beer at home, but want to only serve 4-6 ABV contents for occasional beer drinkers?**
 
-Let's see:
+Let's see (still using model 3):
 
 ```{r}
 
@@ -522,7 +522,7 @@ That's so much better. We should be able to brew beer, predicting an expected al
 
 **Can we serve drinkers with advance taste for beer?**
 
-Here, we're assuming they're looking for stronger beer above 6 ABV perhaps. Let's see
+Here, we're assuming they're looking for stronger beer above 6 ABV perhaps. Let's see:
 
 ```{r}
 
