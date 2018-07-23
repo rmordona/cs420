@@ -478,7 +478,9 @@ Close enough! Not bad!
 
 Some graphs to point out.
 
-This is the result of the dataset after outliers are removed (Whether model1, model2, model3):
+This is the result of the dataset after outliers are removed (Whether model1, model2, model3).
+
+Residual vs Fitted Plot:
 
 ```{r}
 data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE) 
@@ -486,75 +488,15 @@ data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE)
 
 Notice that residual range dropped from (-19, 6) to (-6, to 6)
 
----
-
-***Additioinal Data Analysis for model 3:***
-
-Below are some of the extra analysis done. **(May require more improvement)**
-
-Notice that our Residual-vs-Fitted plot still shows a pattern. Also, the Q-Q box plot have tails that are moving away from the distribution line.  
-
-Revisiting model 3:
-
-model3 = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
-              data = data_no_outliers)
+Normal Q-Q Plot:
 
 ```{r}
-
-# Data analysis on model 3:
-
-# Shapiro.test requires smaller sample size upto 5000 only. Use the following below
-small_index = sample(1:nrow(new_train_set), 4500)
-smaller_sample = data_no_outliers[small_index, ]
-
-# Now re-fit model 3
-model3_small_sample = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
-              data = smaller_sample)
-#
-# Shapiro Test
-shapiro.test(resid(model3_small_sample))
-#
-# Leverage Analysis
-sum(hatvalues(model3_small_sample) > 2 * mean(hatvalues(model3_small_sample)))
-#
-# Residual Analysis
-sum(abs(rstandard(model3_small_sample)) > 2)
-#
-# Cooks Distance Analysis
-#cd_mpg_hp_add = cooks.distance(model3_small_sample)
-#sum(cd_mpg_hp_add > 4 / length(cd_mpg_hp_add))
-#
-#
-par(mfrow = c(2, 2))
-plot(model3_small_sample)
-
-# Let us ignore Shapiro.test and use the actual training set with no outliers.
-# Let's use on cooks distance again
-big_mod_cd = cooks.distance(model3)
-sum(big_mod_cd > 4 / length(big_mod_cd))
-  
-# Now re-fit model 3
-
-model3_extra_analysis = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
-              data = data_no_outliers, subset = big_mod_cd < 4 / length(big_mod_cd))
-
-par(mfrow = c(2, 2))
+# Let's draw Normal Q-Q plot for the original model3
 qqnorm(resid(model3), col = "darkgrey")
 qqline(resid(model3), col = "dodgerblue", lwd = 2)
-qqnorm(resid(model3_extra_analysis), col = "darkgrey")
-qqline(resid(model3_extra_analysis), col = "dodgerblue", lwd = 2)
-
-# Plot residual-fitted, and return dataset without outliers.
-data_no_outliers =  residual_fitted_plot(model3, data_no_outliers, FALSE, 0) 
-data_no_outliers =  residual_fitted_plot(model3_extra_analysis, data_no_outliers, FALSE, 0) 
-
-plot(model3)
-plot(model3_extra_analysis)
-model3_analysis_result = result_metrics(model3_extra_analysis, alpha=0.10)
-model3_analysis_result
-```
 ```
 
+Still within the range of the residual range.
 
 ---
 
