@@ -97,7 +97,7 @@ dataset[, c("BoilGravity")] = as.numeric(dataset[, c("BoilGravity")])
 
 set.seed(142)
 n = nrow(dataset)
-ind = sample(1:nrow(dataset), n * 9/10, replace = FALSE, prob = NULL)
+ind = sample(1:nrow(dataset), n * 8/10, replace = FALSE, prob = NULL)
 
 train_set = dataset[ind,]
 test_set = dataset[-ind,]
@@ -213,7 +213,7 @@ model1_srch = step( start_model, direction = "backward", trace=0)
 
 Note: running the search takes approximately between 27 seconds to 2 minutes.
 
-*Plotting and Validating outliers:*
+**Plotting and Validating outliers:**
 
 ```{r}
 # Plot residual-fitted, and return dataset without outliers.
@@ -257,7 +257,7 @@ model2_srch = step( start_model, direction = "backward", trace=0)
 
 Note: running the search takes approximately between 2.829 seconds to 5 seconds.
 
-*Plotting and Validating outliers:* 
+**Plotting and Validating outliers:**
 
 ```{r}
 # Plot residual-fitted, and return dataset without outliers.
@@ -333,7 +333,7 @@ model_exhaust = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  
 
 Note: running the search takes approximately between 0.957 seconds to 5 seconds.
 
-*Plotting and Validating outliers:*
+**Plotting and Validating outliers:**
 
 ```{r}
 # Plot residual-fitted, and return dataset without outliers.
@@ -342,7 +342,7 @@ data_no_outliers =  residual_fitted_plot(model_exhaust, new_train_set, TRUE, -9)
 
 Note that there are 5 observed outliers out of 63.7k observations. By removing the outliers, the residual range narrowed from (-19,6) to (-6,6). See the new plot in Appendix section.
 
-Refit a model againt dataset with no outliers, using the model derived from the exhausted search.
+Refit a model againt dataset with no outliers, using the model derived from the exhaustive search.
 
 ```{r}
 
@@ -353,6 +353,7 @@ model3_result = result_metrics(model3, alpha=0.10)
 model3_call = model3$call
 model3_result
 ```
+
 
 ---
 
@@ -413,12 +414,15 @@ We used new_test_set to predict ABV using model3 ( choice of model) using alpha 
 predicted_abv = predict(model3, new_test_set, interval="prediction", level=0.01)
 actual_abv = new_test_set$ABV
 
+abv = seq(0,15, 1)
 par(mfrow=c(2,2))
-hist(predicted_abv,  breaks=20, xlab="Predicted Value from Model 3", main="Histogram from Prediction")
-hist(actual_abv, breaks=20, xlab="Actual value from Test Set", main="Histogram from Actual")
+hist(predicted_abv, breaks=100, xlim=range(0,15), xlab="Predicted Value from Model 3", 
+     main="ABV Distribution (Predicted)")
+hist(actual_abv,  breaks=100, xlim=range(0,15), xlab="Actual value from Test Set", 
+     main="ABV Distribution (Actual")
 ```
 
-Histogram shows similarity between predicted value and actual value.
+Histogram shows similarity between predicted value and actual value. Occasional drinkers most likely prefer ABV between 4-6 which is exactly where the highest frequency falls;  and the frequency pattern of the predicted values fall in the same range.
 
 Additionally, sampling the first 20 ABVs of both actual and predict are very close. 
 
@@ -446,6 +450,28 @@ Basically, if we are to assume for a moment that the test data all come from our
 
 In other words, it is fair to say - referring to some of the extraneous variables - that we don't have to measure the interaction between Color and BoilGravity, or between Color and Efficiency as determined by model 1 because those interactions do not prove to have additional effect in model 3. (Ref 17.3 of text)
 
+**Other analysis in the context of drinking beers:**
+
+Assume, that we are master at brewing beer at home, and all we want is really to serve up occasional (non-strong) drinkers. We know that those beer drinkers may prefer ABV in the range of 4-6; in other words, the predicted-vs-actual plot show some unusual observations above the 20 or even 30 range. Shall we eliminate them? Let's see.
+
+```{r}
+range(actual_abv)
+```
+
+Oh no! We got very strong beer mix out there!  If we are to serve up beer between 4-6 ABVs, what would that proportion be in the true distribution?
+
+```{r}
+mean(actual_abv <= 6 & actual_abv >=4 ) 
+```
+
+Would that be the same in the emperical distribution?
+
+```{r}
+mean(predicted_abv <= 6 & predicted_abv >=4 ) 
+```
+
+Close enough! Not bad!
+
 ---
 
 ## Appendix
@@ -459,6 +485,76 @@ data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE)
 ```
 
 Notice that residual range dropped from (-19, 6) to (-6, to 6)
+
+---
+
+***Additioinal Data Analysis for model 3:***
+
+Below are some of the extra analysis done. **(May require more improvement)**
+
+Notice that our Residual-vs-Fitted plot still shows a pattern. Also, the Q-Q box plot have tails that are moving away from the distribution line.  
+
+Revisiting model 3:
+
+model3 = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
+              data = data_no_outliers)
+
+```{r}
+
+# Data analysis on model 3:
+
+# Shapiro.test requires smaller sample size upto 5000 only. Use the following below
+small_index = sample(1:nrow(new_train_set), 4500)
+smaller_sample = data_no_outliers[small_index, ]
+
+# Now re-fit model 3
+model3_small_sample = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
+              data = smaller_sample)
+#
+# Shapiro Test
+shapiro.test(resid(model3_small_sample))
+#
+# Leverage Analysis
+sum(hatvalues(model3_small_sample) > 2 * mean(hatvalues(model3_small_sample)))
+#
+# Residual Analysis
+sum(abs(rstandard(model3_small_sample)) > 2)
+#
+# Cooks Distance Analysis
+#cd_mpg_hp_add = cooks.distance(model3_small_sample)
+#sum(cd_mpg_hp_add > 4 / length(cd_mpg_hp_add))
+#
+#
+par(mfrow = c(2, 2))
+plot(model3_small_sample)
+
+# Let us ignore Shapiro.test and use the actual training set with no outliers.
+# Let's use on cooks distance again
+big_mod_cd = cooks.distance(model3)
+sum(big_mod_cd > 4 / length(big_mod_cd))
+  
+# Now re-fit model 3
+
+model3_extra_analysis = lm( ABV ~ OG + Color + v1 + v2 + v3 + OG:v1 + Color:BoilTime +  BoilTime:v3,
+              data = data_no_outliers, subset = big_mod_cd < 4 / length(big_mod_cd))
+
+par(mfrow = c(2, 2))
+qqnorm(resid(model3), col = "darkgrey")
+qqline(resid(model3), col = "dodgerblue", lwd = 2)
+qqnorm(resid(model3_extra_analysis), col = "darkgrey")
+qqline(resid(model3_extra_analysis), col = "dodgerblue", lwd = 2)
+
+# Plot residual-fitted, and return dataset without outliers.
+data_no_outliers =  residual_fitted_plot(model3, data_no_outliers, FALSE, 0) 
+data_no_outliers =  residual_fitted_plot(model3_extra_analysis, data_no_outliers, FALSE, 0) 
+
+plot(model3)
+plot(model3_extra_analysis)
+model3_analysis_result = result_metrics(model3_extra_analysis, alpha=0.10)
+model3_analysis_result
+```
+```
+
 
 ---
 
