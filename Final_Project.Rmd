@@ -411,8 +411,9 @@ We used new_test_set to predict ABV using model3 ( choice of model) using alpha 
 
 ```{r}
 
-predicted_abv = predict(model3, new_test_set, interval="prediction", level=0.01)
+predicted_interval = predict(model3, new_test_set, interval="prediction", level=0.01)
 actual_abv = new_test_set$ABV
+predicted_abv = predicted_interval[,"fit"]
 
 abv = seq(0,15, 1)
 par(mfrow=c(2,2))
@@ -428,13 +429,13 @@ Additionally, sampling the first 20 ABVs of both actual and predict are very clo
 
 ```{r}
 head(actual_abv, 20)
-round(as.vector(head(predicted_abv[,"fit"], 20)),2)
+round(as.vector(head(predicted_abv, 20)),2)
 ```
 
 Looking at predicted values vs actual values
 
 ```{r}
-plot(predicted_abv[,"fit"], actual_abv, col="dodgerblue", ylab="Actual", 
+plot(predicted_abv, actual_abv, col="dodgerblue", ylab="Actual", 
       xlab="Predicted", main="Actual vs Predicted for Test Data")
 abline(0,1, col="darkorange", lwd=2)
 ```
@@ -443,10 +444,10 @@ abline(0,1, col="darkorange", lwd=2)
 Checking RMSE:
 
 ```{r}
-(accuracy = 1 - (rmse = sqrt( mean(( predicted_abv - actual_abv )^2) ))) * 100
+(rmse = sqrt(mean((predicted_abv - actual_abv)^2)))
 ```
 
-Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the preferred model 3, it can be observed that an accuracy of `r accuracy` seems to be enough to attain some level of alcohol content without other extraneous sensors - and to rely for more additional sensors does not give additional benefit or effect (see R-squared/RMSE) (though statistically, those extraneous sensors may be significant by ANOVA). It should be noted that based on the Exhaustive search (model 3), for ABV (alcohol by volume), by way of parameterization (sort of brute force), it suggest to have a good mix of either "extract" or "BIAB" for BrewMethod along with "Specific Gravity" for SugarScale. The interaction between Color and BoilTime, Boltime and Brewmethod of 'extract'. (This could very well be done also by subsetting dataset to those observations only)
+Basically, if we are to assume for a moment that the test data all come from our attempts to brew beer, it would seem that by following the measuring gadgets ( or sensors ) based on the preferred model 3, it can be observed that a standard error of  `r rmse` seems enough to predict the expected alcohol content without other extraneous sensors - and to rely for more additional sensors does not give additional benefit or effect (see R-squared/RMSE) (though statistically, those extraneous sensors may be significant by ANOVA). It should be noted that based on the Exhaustive search (model 3), for ABV (alcohol by volume), by way of parameterization (sort of brute force), it suggest to have a good mix of either "extract" or "BIAB" for BrewMethod along with "Specific Gravity" for SugarScale. The interaction between Color and BoilTime, Boltime and Brewmethod of 'extract'. (This could very well be done also by subsetting dataset to those observations only)
 
 In other words, it is fair to say - referring to some of the extraneous variables - that we don't have to measure the interaction between Color and BoilGravity, or between Color and Efficiency as determined by model 1 because those interactions do not prove to have additional effect in model 3. (Ref 17.3 of text)
 
@@ -456,6 +457,7 @@ Assume, that we are master at brewing beer at home, and all we want is really to
 
 ```{r}
 range(actual_abv)
+range(predicted_abv)
 ```
 
 Oh no! We got very strong beer mix out there!  If we are to serve up beer between 4-6 ABVs, what would that proportion be in the true distribution?
@@ -472,20 +474,6 @@ mean(predicted_abv <= 6 & predicted_abv >=4 )
 
 Close enough! Not bad!
 
----
-
-## Appendix
-
-Some graphs to point out.
-
-This is the result of the dataset after outliers are removed (Whether model1, model2, model3).
-
-Residual vs Fitted Plot:
-
-```{r}
-data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE) 
-```
-
 Notice that residual range dropped from (-19, 6) to (-6, to 6)
 
 Normal Q-Q Plot:
@@ -496,7 +484,7 @@ qqnorm(resid(model3), col = "darkgrey")
 qqline(resid(model3), col = "dodgerblue", lwd = 2)
 ```
 
-Still within the range of the residual range.
+Still within the range of the residual range. The residuals are normally distributed (symmetric), but we are not going to put penalty on the outliers ( tails moving away from the blue line) .
 
 ---
 
