@@ -474,6 +474,20 @@ mean(predicted_abv <= 6 & predicted_abv >=4 )
 
 Close enough! Not bad!
 
+---
+
+## Appendix
+
+Some graphs to point out.
+
+This is the result of the dataset after outliers are removed (Whether model1, model2, model3).
+
+Residual vs Fitted Plot:
+
+```{r}
+data_no_outliers =  residual_fitted_plot(model3, new_train_set, FALSE) 
+```
+
 Notice that residual range dropped from (-19, 6) to (-6, to 6)
 
 Normal Q-Q Plot:
@@ -484,7 +498,7 @@ qqnorm(resid(model3), col = "darkgrey")
 qqline(resid(model3), col = "dodgerblue", lwd = 2)
 ```
 
-Still within the range of the residual range. The residuals are normally distributed (symmetric), but we are not going to put penalty on the outliers ( tails moving away from the blue line) .
+Still within the range of the residual range. The residuals are normally distributed (symmetric), but we are not going to put penalty on the outliers ( tails moving away from the blue line).
 
 ---
 
