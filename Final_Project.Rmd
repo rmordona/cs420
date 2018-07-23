@@ -97,7 +97,7 @@ dataset[, c("BoilGravity")] = as.numeric(dataset[, c("BoilGravity")])
 
 set.seed(142)
 n = nrow(dataset)
-ind = sample(1:nrow(dataset), n * 8/10, replace = FALSE, prob = NULL)
+ind = sample(1:nrow(dataset), n * 9/10, replace = FALSE, prob = NULL)
 
 train_set = dataset[ind,]
 test_set = dataset[-ind,]
@@ -480,7 +480,7 @@ Close enough! Not bad!
 
 Some graphs to point out.
 
-This is the result of the dataset after outliers are removed (Whether model1, model2, model3).
+This is the result of the dataset after outliers are removed (whether model1, model2, model3).
 
 Residual vs Fitted Plot:
 
@@ -499,6 +499,44 @@ qqline(resid(model3), col = "dodgerblue", lwd = 2)
 ```
 
 Still within the range of the residual range. The residuals are normally distributed (symmetric), but we are not going to put penalty on the outliers ( tails moving away from the blue line).
+
+---
+
+**Just an extra, for fun,  what if we brew our own beer at home, but want to only serve 4-6 ABV contents for occasional beer drinkers?**
+
+Let's see:
+
+```{r}
+
+test_for_occasions = new_test_set[ which ( new_test_set$ABV <= 6 & new_test_set$ABV >=4 ),]
+
+predicted_occasions = predict(model3, test_for_occasions, type="response")
+actual_occasions = test_for_occasions$ABV
+
+# RMSE
+(rmse = sqrt(mean((predicted_occasions - actual_occasions)^2)))
+
+```
+
+That's so much better. We should be able to brew beer, predicting an expected alcohool content with an error of only `r rmse` if we focus our beer making around the 4-6 ABV.
+
+**Can we serve drinkers with advance taste for beer?**
+
+Let's see
+
+```{r}
+
+test_for_hard = new_test_set[ which ( new_test_set$ABV > 6 ),]
+
+predicted_hard = predict(model3, test_for_hard, type="response")
+actual_hard = test_for_hard$ABV
+
+# RMSE
+(rmse = sqrt(mean((predicted_hard - actual_hard)^2)))
+
+```
+
+Probably not. We will have an error rate of `r rmse` - those beer drinkers will not be happy.
 
 ---
 
